@@ -196,7 +196,7 @@ def transcribe(
     prompt_reset_since = 0
 
     if initial_prompt is not None:
-        initial_prompt_tokens = tokenizer.encode(" " + initial_prompt.strip())
+        initial_prompt_tokens = tokenizer.encode(f" {initial_prompt.strip()}")
         all_tokens.extend(initial_prompt_tokens)
     else:
         initial_prompt_tokens = []
@@ -220,8 +220,8 @@ def transcribe(
 
     # show the progress bar when verbose is False (if True, transcribed text will be printed)
     with tqdm.tqdm(
-        total=content_frames, unit="frames", disable=verbose is not False
-    ) as pbar:
+            total=content_frames, unit="frames", disable=verbose is not False
+        ) as pbar:
         last_speech_timestamp = 0.0
         while seek < content_frames:
             time_offset = float(seek * HOP_LENGTH / SAMPLE_RATE)
@@ -327,9 +327,9 @@ def transcribe(
                 word_end_timestamps = [
                     w["end"] for s in current_segments for w in s["words"]
                 ]
-                if len(word_end_timestamps) > 0:
+                if word_end_timestamps:
                     last_speech_timestamp = word_end_timestamps[-1]
-                if not single_timestamp_ending and len(word_end_timestamps) > 0:
+                if not single_timestamp_ending and word_end_timestamps:
                     seek_shift = round(
                         (word_end_timestamps[-1] - time_offset) * FRAMES_PER_SECOND
                     )
