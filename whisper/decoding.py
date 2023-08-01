@@ -455,7 +455,7 @@ class ApplyTimestampRules(LogitFilter):
         # timestamps have to appear in pairs, except directly before EOT; mask logits accordingly
         for k in range(tokens.shape[0]):
             sampled_tokens = tokens[k, self.sample_begin :]
-            seq = [t for t in sampled_tokens.tolist()]
+            seq = list(sampled_tokens.tolist())
             last_was_timestamp = (
                 len(seq) >= 1 and seq[-1] >= self.tokenizer.timestamp_begin
             )
@@ -584,18 +584,18 @@ class DecodingTask:
 
         if prefix := self.options.prefix:
             prefix_tokens = (
-                self.tokenizer.encode(" " + prefix.strip())
+                self.tokenizer.encode(f" {prefix.strip()}")
                 if isinstance(prefix, str)
                 else prefix
             )
             if self.sample_len is not None:
                 max_prefix_len = self.n_ctx // 2 - self.sample_len
                 prefix_tokens = prefix_tokens[-max_prefix_len:]
-            tokens = tokens + prefix_tokens
+            tokens += prefix_tokens
 
         if prompt := self.options.prompt:
             prompt_tokens = (
-                self.tokenizer.encode(" " + prompt.strip())
+                self.tokenizer.encode(f" {prompt.strip()}")
                 if isinstance(prompt, str)
                 else prompt
             )
@@ -667,8 +667,8 @@ class DecodingTask:
                 audio_features, self.tokenizer
             )
             languages = [max(probs, key=probs.get) for probs in lang_probs]
-            if self.options.language is None:
-                tokens[:, self.sot_index + 1] = lang_tokens  # write language tokens
+        if self.options.language is None:
+            tokens[:, self.sot_index + 1] = lang_tokens  # write language tokens
 
         return languages, lang_probs
 

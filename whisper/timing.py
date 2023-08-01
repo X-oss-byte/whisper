@@ -170,7 +170,7 @@ def find_alignment(
     medfilt_width: int = 7,
     qk_scale: float = 1.0,
 ) -> List[WordTiming]:
-    if len(text_tokens) == 0:
+    if not text_tokens:
         return []
 
     tokens = torch.tensor(
@@ -279,7 +279,7 @@ def add_word_timestamps(
     last_speech_timestamp: float,
     **kwargs,
 ):
-    if len(segments) == 0:
+    if not segments:
         return
 
     text_tokens_per_segment = [
@@ -335,7 +335,7 @@ def add_word_timestamps(
 
         # hack: truncate long words at segment boundaries.
         # a better segmentation algorithm based on VAD should be able to replace this.
-        if len(words) > 0:
+        if words:
             # ensure the first and second word after a pause is not longer than
             # twice the median word duration.
             if words[0]["end"] - last_speech_timestamp > median_duration * 4 and (
